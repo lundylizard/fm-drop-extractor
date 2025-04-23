@@ -63,14 +63,22 @@ class DataReader:
         with open(mrg_path, 'rb') as mrg:
             for i in range(39):
                 base = 0xE9B000 + 0x1800 * i
-                mrg.seek(base)
-                sa_pow = [self.read_value(mrg, '<H') for _ in range(722)]
+    
+                # S/A-Pow drops
                 mrg.seek(base + 0x5B4)
+                sa_pow = [self.read_value(mrg, '<H') for _ in range(722)]
+    
+                # B/C/D drops
+                mrg.seek(base + 0xB68)
                 bcd_pow = [self.read_value(mrg, '<H') for _ in range(722)]
+    
+                # S/A-Tec drops
                 mrg.seek(base + 0x111C)
                 sa_tec = [self.read_value(mrg, '<H') for _ in range(722)]
+    
                 drops.append((sa_tec, bcd_pow, sa_pow))
         return drops
+
 
     def load(self, slus_path: str, mrg_path: str):
         cards, duelists = self.load_names(slus_path)
